@@ -22,6 +22,14 @@ class Mandelbrot extends JPanel {
 
   static int iterations, maxIterations = 100, bound = 2;
 
+  static Thread1 thread1 = new Thread1(a, bi);
+  static Thread2 thread2 = new Thread2(a, bi);
+  static Thread3 thread3 = new Thread3(a, bi);
+
+  static Long time;
+
+  static int iterator = 0;
+
   public static void main(String[] args) {
 
     mandelbrot = new Mandelbrot();
@@ -33,38 +41,41 @@ class Mandelbrot extends JPanel {
     frame.add(mandelbrot);
 
     while (true) {
+      time = System.nanoTime();
       mandelbrot.repaint();
       for (int x = 0; x < windowWidth; x++) {
         for (int y = 0; y < windowHeight; y++) {
           a = map(x, 0, windowWidth, maxValues[LEFT], maxValues[RIGHT]);
           bi = map(y, 0, windowHeight, maxValues[TOP], maxValues[BOTTOM]);
-          iterations = iterate(a, bi);
+          iterator %= 3;
+          switch (iterator) {
+            case 0: thread1.a = a;
+                    thread1.bi = bi;
+                    thread1.run();
+                    break;
+            case 1: thread2.a = a;
+                    thread2.bi = bi;
+                    thread2.run();
+                    break;
+            case 2: thread3.a = a;
+                    thread3.bi = bi;
+                    thread3.run();
+                    break;
+          }
+          iterator++;
         }
       }
+      System.out.println((System.nanoTime() - time) / 1000000000.0);
+      iterator = 0;
     }
   }
 
-  public void paitnComponent(Graphics g) {
+  public void paintComponent(Graphics g) {
     super.paintComponent(g);
   }
 
-  public int iterate(double a, double bi) {
-    int iterations = 0;
-    double currA, currBi, tempA;
-    for (int i = 0; i < maxIterations; i++) {
-      tempA = currA;
-      currA = Math.pow(currA, 2) - Math.pow(currBi, 2) + a;
-      currBi = 2 * tempA * currB + bi;
-      if (Math.sqrt(Math.pow(a, 2) + Math.pow(bi, 2)) > bound) {
-        iterations = i;
-        break;
-      }
-    }
-    return iterations;
-  }
-
-  public double map() {
-    return 0;
+  public static double map(double a, double firstMin, double firstMax, double secondMin, double secondMax) {
+    return ((a / (firstMax - firstMin)) * (secondMax - secondMin)) + secondMin;
   }
 
 }
