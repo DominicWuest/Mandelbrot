@@ -30,6 +30,8 @@ class Mandelbrot extends JPanel {
 
   static int iterator = 0;
 
+  static Color[][] pixels = new Color[windowWidth][windowHeight];
+
   public static void main(String[] args) {
 
     mandelbrot = new Mandelbrot();
@@ -42,7 +44,6 @@ class Mandelbrot extends JPanel {
 
     while (true) {
       time = System.nanoTime();
-      mandelbrot.repaint();
       for (int x = 0; x < windowWidth; x++) {
         for (int y = 0; y < windowHeight; y++) {
           a = map(x, 0, windowWidth, maxValues[LEFT], maxValues[RIGHT]);
@@ -51,14 +52,20 @@ class Mandelbrot extends JPanel {
           switch (iterator) {
             case 0: thread1.a = a;
                     thread1.bi = bi;
+                    thread1.x = x;
+                    thread1.y = y;
                     thread1.run();
                     break;
             case 1: thread2.a = a;
                     thread2.bi = bi;
+                    thread2.x = x;
+                    thread2.y = y;
                     thread2.run();
                     break;
             case 2: thread3.a = a;
                     thread3.bi = bi;
+                    thread3.x = x;
+                    thread3.y = y;
                     thread3.run();
                     break;
           }
@@ -67,11 +74,19 @@ class Mandelbrot extends JPanel {
       }
       System.out.println((System.nanoTime() - time) / 1000000000.0);
       iterator = 0;
+      mandelbrot.repaint();
     }
   }
 
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
+    this.setBackground(Color.WHITE);
+    for (int x = 0; x < windowWidth; x++) {
+      for (int y = 0; y < windowHeight; y++) {
+        g.setColor(pixels[x][y]);
+        g.drawLine(x, y, x, y);
+      }
+    }
   }
 
   public static double map(double a, double firstMin, double firstMax, double secondMin, double secondMax) {
