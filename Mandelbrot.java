@@ -7,12 +7,12 @@ import java.awt.Color;
 class Mandelbrot extends JPanel {
   // Array of the maximum Values the points should have in the order of
   // Top, Right, Bottom, Left
-  static double[] maxValues = {-1.5, 2, 1.5, -2};
+  static double[] maxValues = {-1, 1, 1, -2.25};
   // Constants for the position of the maximum Values
   // In the array maxValues
   final static int TOP = 0, RIGHT = 1, BOTTOM = 2, LEFT = 3;
 
-  static int windowWidth = 300, windowHeight = 300;
+  static int windowWidth = 1000, windowHeight = 1000;
 
   static Mandelbrot mandelbrot;
 
@@ -20,7 +20,7 @@ class Mandelbrot extends JPanel {
 
   static double a, bi;
 
-  static int iterations, maxIterations = 100, bound = 2;
+  static int iterations, maxIterations = 500, bound = 2;
 
   static Thread1 thread1 = new Thread1(a, bi);
   static Thread2 thread2 = new Thread2(a, bi);
@@ -70,11 +70,11 @@ class Mandelbrot extends JPanel {
                     break;
           }
           iterator++;
+          mandelbrot.repaint();
         }
       }
       System.out.println((System.nanoTime() - time) / 1000000000.0);
       iterator = 0;
-      mandelbrot.repaint();
     }
   }
 
