@@ -18,9 +18,7 @@ class Mandelbrot extends JPanel {
 
   static JFrame frame = new JFrame("Mandelbrot");
 
-  static double a, bi;
-
-  static int iterations, maxIterations = 500, bound = 2;
+  static int maxIterations = 500, bound = 2;
 
   static final int N_THREADS = Runtime.getRuntime().availableProcessors();
 
@@ -28,13 +26,13 @@ class Mandelbrot extends JPanel {
 
   static Long time;
 
-  static int iterator = 0;
+  static int iteratorIndex = 0;
 
   static Color[][] pixels = new Color[windowWidth][windowHeight];
 
-  public static void main(String[] args) {
+  static boolean finishedChecker;
 
-    for (int i = 0; i < N_THREADS - 1; i++) iterators[i] = new Iterator(a, bi);
+  public static void main(String[] args) {
 
     mandelbrot = new Mandelbrot();
 
@@ -46,22 +44,19 @@ class Mandelbrot extends JPanel {
 
     while (true) {
       time = System.nanoTime();
-      for (int x = 0; x < windowWidth; x++) {
-        for (int y = 0; y < windowHeight; y++) {
-          a = map(x, 0, windowWidth, maxValues[LEFT], maxValues[RIGHT]);
-          bi = map(y, 0, windowHeight, maxValues[TOP], maxValues[BOTTOM]);
-          iterator %= N_THREADS - 1;
-          iterators[iterator].a = a;
-          iterators[iterator].bi = bi;
-          iterators[iterator].x = x;
-          iterators[iterator].y = y;
-          iterators[iterator].run();
-          iterator++;
-          mandelbrot.repaint();
+      for (int i = 0; i < iterators.length; i++) iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 1) * i, windowHeight / (N_THREADS - 1) * (i + 1));
+      while (true)  {
+        finishedChecker = true;
+        for (int i = 0; i < iterators.length; i++) {
+          if (!iterators[i].finished) {
+            finishedChecker = false;
+            break;
+          }
         }
+        if (finishedChecker) break;
       }
       System.out.println((System.nanoTime() - time) / 1000000000.0);
-      iterator = 0;
+      mandelbrot.repaint();
     }
   }
 
@@ -74,10 +69,6 @@ class Mandelbrot extends JPanel {
         g.drawLine(x, y, x, y);
       }
     }
-  }
-
-  public static double map(double a, double firstMin, double firstMax, double secondMin, double secondMax) {
-    return ((a / (firstMax - firstMin)) * (secondMax - secondMin)) + secondMin;
   }
 
 }

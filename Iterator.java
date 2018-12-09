@@ -1,31 +1,50 @@
 import java.awt.Color;
 
-class Iterator extends Thread {
+class Iterator implements Runnable {
 
+  Thread myThread;
   double a, bi;
-  int x, y;
+  volatile boolean finished;
+  int minY, maxY;
+  int iterations;
+  double currA, currBi, tempA;
+  int color;
 
-  Iterator(double a, double bi) {
-    this.a = a;
-    this.bi = bi;
+  Iterator(int index, int minY, int maxY) {
+    myThread = new Thread(this, Integer.toString(index));
+    this.minY = minY;
+    this.maxY = maxY;
+    this.finished = false;
+    myThread.start();
   }
 
   public void run() {
-    int iterations = -1;
-    double currA = this.a, currBi = this.bi, tempA;
-    if (Math.sqrt(Math.pow(currA, 2) + Math.pow(currBi, 2)) > Mandelbrot.bound) iterations = 0;
-    else {
-      for (int i = 1; i < Mandelbrot.maxIterations; i++) {
-        tempA = currA;
-        currA = Math.pow(currA, 2) - Math.pow(currBi, 2) + this.a;
-        currBi = 2 * tempA * currBi + this.bi;
-        if (Math.sqrt(Math.pow(currA, 2) + Math.pow(currBi, 2)) > Mandelbrot.bound) {
-          iterations = i;
-          break;
+    this.finished = false;
+    for (int y = this.minY; y < this.maxY; y++) {
+      bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
+      for (int x = 0; x < Mandelbrot.windowWidth; x++) {
+        this.iterations = 0;
+        a = map(x, 0, Mandelbrot.windowWidth, Mandelbrot.maxValues[Mandelbrot.LEFT], Mandelbrot.maxValues[Mandelbrot.RIGHT]);
+        currA = 0;
+        currBi = 0;
+        for (int i = 0; i <= Mandelbrot.maxIterations; i++) {
+          tempA = currA;
+          currA = Math.pow(currA, 2) - Math.pow(currBi, 2) + a;
+          currBi = 2 * tempA * currBi + bi;
+          if (Math.sqrt(Math.pow(currA, 2) + Math.pow(currBi, 2)) > Mandelbrot.bound) {
+            iterations = i;
+            break;
+          }
         }
+        color = (int)map(Math.sqrt(map(iterations, 0, Mandelbrot.maxIterations, 0, 1)), 0, 1, 0, 255);
+        Mandelbrot.pixels[x][y] = new Color(color);
       }
     }
-    Mandelbrot.pixels[this.x][this.y] = new Color((int)Mandelbrot.map(Math.sqrt(Mandelbrot.map(iterations, 0, Mandelbrot.maxIterations, 0, 1)), 0, 1, 0, 255));
+    this.finished = true;
+  }
+
+  public double map(double a, double firstMin, double firstMax, double secondMin, double secondMax) {
+    return ((a / (firstMax - firstMin)) * (secondMax - secondMin)) + secondMin;
   }
 
 }
