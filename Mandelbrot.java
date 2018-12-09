@@ -1,7 +1,9 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 @SuppressWarnings("serial")
 class Mandelbrot extends JPanel {
@@ -28,13 +30,15 @@ class Mandelbrot extends JPanel {
 
   static int iteratorIndex = 0;
 
-  static Color[][] pixels = new Color[windowWidth][windowHeight];
-
   static boolean finishedChecker;
+
+  public static volatile BufferedImage canvas;
 
   public static void main(String[] args) {
 
     mandelbrot = new Mandelbrot();
+
+    canvas = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_ARGB);
 
     frame.setSize(windowWidth, windowHeight + 30);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,13 +66,8 @@ class Mandelbrot extends JPanel {
 
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    this.setBackground(Color.WHITE);
-    for (int x = 0; x < windowWidth; x++) {
-      for (int y = 0; y < windowHeight; y++) {
-        g.setColor(pixels[x][y]);
-        g.drawLine(x, y, x, y);
-      }
-    }
+    Graphics2D g2 = (Graphics2D)g;
+    g2.drawImage(canvas, null, null);
   }
 
 }

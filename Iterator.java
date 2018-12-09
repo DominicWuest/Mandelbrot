@@ -37,7 +37,7 @@ class Iterator implements Runnable {
           }
         }
         color = (int)map(Math.sqrt(map(iterations, 0, Mandelbrot.maxIterations, 0, 1)), 0, 1, 0, 255);
-        Mandelbrot.pixels[x][y] = new Color(color);
+        Mandelbrot.canvas.setRGB(x, y, new Color(color).getRGB());
       }
     }
     this.finished = true;
