@@ -1,11 +1,11 @@
 import java.awt.Color;
 
-class Thread3 extends Thread {
+class Iterator extends Thread {
 
   double a, bi;
   int x, y;
 
-  Thread3(double a, double bi) {
+  Iterator(double a, double bi) {
     this.a = a;
     this.bi = bi;
   }

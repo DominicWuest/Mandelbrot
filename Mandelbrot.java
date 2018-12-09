@@ -22,9 +22,9 @@ class Mandelbrot extends JPanel {
 
   static int iterations, maxIterations = 500, bound = 2;
 
-  static Thread1 thread1 = new Thread1(a, bi);
-  static Thread2 thread2 = new Thread2(a, bi);
-  static Thread3 thread3 = new Thread3(a, bi);
+  static final int N_THREADS = Runtime.getRuntime().availableProcessors();
+
+  static Iterator[] iterators = new Iterator[N_THREADS - 1];
 
   static Long time;
 
@@ -33,6 +33,8 @@ class Mandelbrot extends JPanel {
   static Color[][] pixels = new Color[windowWidth][windowHeight];
 
   public static void main(String[] args) {
+
+    for (int i = 0; i < N_THREADS - 1; i++) iterators[i] = new Iterator(a, bi);
 
     mandelbrot = new Mandelbrot();
 
@@ -48,27 +50,12 @@ class Mandelbrot extends JPanel {
         for (int y = 0; y < windowHeight; y++) {
           a = map(x, 0, windowWidth, maxValues[LEFT], maxValues[RIGHT]);
           bi = map(y, 0, windowHeight, maxValues[TOP], maxValues[BOTTOM]);
-          iterator %= 3;
-          switch (iterator) {
-            case 0: thread1.a = a;
-                    thread1.bi = bi;
-                    thread1.x = x;
-                    thread1.y = y;
-                    thread1.run();
-                    break;
-            case 1: thread2.a = a;
-                    thread2.bi = bi;
-                    thread2.x = x;
-                    thread2.y = y;
-                    thread2.run();
-                    break;
-            case 2: thread3.a = a;
-                    thread3.bi = bi;
-                    thread3.x = x;
-                    thread3.y = y;
-                    thread3.run();
-                    break;
-          }
+          iterator %= N_THREADS - 1;
+          iterators[iterator].a = a;
+          iterators[iterator].bi = bi;
+          iterators[iterator].x = x;
+          iterators[iterator].y = y;
+          iterators[iterator].run();
           iterator++;
           mandelbrot.repaint();
         }
