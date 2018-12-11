@@ -4,22 +4,21 @@ class Iterator implements Runnable {
 
   Thread myThread;
   double a, bi;
-  volatile boolean finished;
   int minY, maxY;
   int iterations;
   double currA, currBi, tempA;
   int color;
+  int index;
 
   Iterator(int index, int minY, int maxY) {
     myThread = new Thread(this, Integer.toString(index));
+    this.index = index;
     this.minY = minY;
     this.maxY = maxY;
-    this.finished = false;
     myThread.start();
   }
 
   public void run() {
-    this.finished = false;
     for (int y = this.minY; y < this.maxY; y++) {
       bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
       for (int x = 0; x < Mandelbrot.windowWidth; x++) {
@@ -40,7 +39,7 @@ class Iterator implements Runnable {
         Mandelbrot.canvas.setRGB(x, y, new Color(color).getRGB());
       }
     }
-    this.finished = true;
+    Mandelbrot.finishedStatus[this.index] = true;
   }
 
   public double map(double a, double firstMin, double firstMax, double secondMin, double secondMax) {
