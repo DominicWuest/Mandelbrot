@@ -34,7 +34,11 @@ class Mandelbrot extends JPanel {
 
   static boolean finishedChecker;
 
+<<<<<<< HEAD
   public static BufferedImage canvas;
+=======
+  static BufferedImage canvas;
+>>>>>>> f428ef8b7cc530338286339b29afd92e128ec15d
 
   public static void main(String[] args) {
 
