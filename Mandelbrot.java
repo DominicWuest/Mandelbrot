@@ -26,7 +26,7 @@ class Mandelbrot extends JPanel {
 
   static Iterator[] iterators = new Iterator[N_THREADS - 1];
 
-  static boolean[] finishedStatus = new boolean[N_THREADS - 1];
+  static volatile boolean[] finishedStatus = new boolean[N_THREADS - 1];
 
   static Long time;
 
@@ -34,11 +34,7 @@ class Mandelbrot extends JPanel {
 
   static boolean finishedChecker;
 
-<<<<<<< HEAD
-  public static BufferedImage canvas;
-=======
   static BufferedImage canvas;
->>>>>>> f428ef8b7cc530338286339b29afd92e128ec15d
 
   public static void main(String[] args) {
 

@@ -39,7 +39,7 @@ class Iterator implements Runnable {
         Mandelbrot.canvas.setRGB(x, y, new Color(color).getRGB());
       }
     }
-    Mandelbrot.finishedStatus[this.index] = true;
+    Mandelbrot.finishedStatus[this.index] = false;
   }
 
   public double map(double a, double firstMin, double firstMax, double secondMin, double secondMax) {
