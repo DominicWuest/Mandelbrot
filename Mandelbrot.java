@@ -14,7 +14,7 @@ class Mandelbrot extends JPanel {
   // In the array maxValues
   final static int TOP = 0, RIGHT = 1, BOTTOM = 2, LEFT = 3;
 
-  static int windowWidth = 1000, windowHeight = 1000;
+  static final int windowWidth = 1000, windowHeight = 1000;
 
   static Mandelbrot mandelbrot;
 
@@ -32,7 +32,7 @@ class Mandelbrot extends JPanel {
 
   static boolean finishedChecker;
 
-  public static volatile BufferedImage canvas;
+  public static BufferedImage canvas;
 
   public static void main(String[] args) {
 
@@ -59,7 +59,7 @@ class Mandelbrot extends JPanel {
         }
         if (finishedChecker) break;
       }
-      System.out.println((System.nanoTime() - time) / 1000000000.0);
+      System.out.println((System.nanoTime() - time) / 1000000000.0 + " s");
       mandelbrot.repaint();
     }
   }
