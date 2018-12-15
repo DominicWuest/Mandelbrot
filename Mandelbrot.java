@@ -26,6 +26,8 @@ class Mandelbrot extends JPanel {
 
   static Iterator[] iterators = new Iterator[N_THREADS - 1];
 
+  static boolean[] finishedStatus = new boolean[N_THREADS - 1];
+
   static Long time;
 
   static int iteratorIndex = 0;
@@ -48,11 +50,14 @@ class Mandelbrot extends JPanel {
 
     while (true) {
       time = System.nanoTime();
-      for (int i = 0; i < iterators.length; i++) iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 1) * i, windowHeight / (N_THREADS - 1) * (i + 1));
+      for (int i = 0; i < iterators.length; i++) {
+        iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 1) * i, windowHeight / (N_THREADS - 1) * (i + 1));
+        finishedStatus[i] = true;
+      }
       while (true)  {
         finishedChecker = true;
         for (int i = 0; i < iterators.length; i++) {
-          if (!iterators[i].finished) {
+          if (finishedStatus[i]) {
             finishedChecker = false;
             break;
           }
