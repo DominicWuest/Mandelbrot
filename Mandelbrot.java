@@ -43,7 +43,7 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
 
   static BufferedImage canvas;
 
-  static int lastMouseX = -1, lastMouseY = -1;
+  static int lastMouseX, lastMouseY;
 
   public static void main(String[] args) {
 
@@ -101,28 +101,25 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
   }
 
   public void mouseDragged(MouseEvent e) {
-    long timee = System.nanoTime();
-    if (e.getButton() == 0 && lastMouseX != -1) {
-      Vector<Integer> mouseVector = new Vector(2);
-      mouseVector.addElement(new Integer(lastMouseX - e.getX()));
-      mouseVector.addElement(new Integer(lastMouseY - e.getY()));
-      double toIncreaseX = (Math.abs(maxValues[RIGHT]) + Math.abs(maxValues[LEFT])) * (mouseVector.get(0) / (double)windowWidth);
-      double toIncreaseY = (Math.abs(maxValues[BOTTOM]) + Math.abs(maxValues[TOP])) * (mouseVector.get(1) / (double)windowHeight);
-      int[][] copy = display.clone();
-      maxValues[RIGHT] += toIncreaseX;
-      maxValues[LEFT] += toIncreaseX;
-      maxValues[BOTTOM] += toIncreaseY;
-      maxValues[TOP] += toIncreaseY;
-      for (int x = 0; x < windowWidth; x++) {
+    Vector<Integer> mouseVector = new Vector(2);
+    mouseVector.addElement(new Integer(lastMouseX - e.getX()));
+    mouseVector.addElement(new Integer(lastMouseY - e.getY()));
+    double toIncreaseX = (Math.abs(maxValues[LEFT]) + Math.abs(maxValues[RIGHT])) * (mouseVector.get(0) / (double)windowWidth);
+    double toIncreaseY = (Math.abs(maxValues[TOP]) + Math.abs(maxValues[BOTTOM])) * (mouseVector.get(1) / (double)windowHeight);
+    maxValues[RIGHT] += toIncreaseX;
+    maxValues[LEFT] += toIncreaseX;
+    maxValues[BOTTOM] += toIncreaseY;
+    maxValues[TOP] += toIncreaseY;
+    int[][] copy = display.clone();
+    for (int x = 0; x < windowWidth; x++) {
+      if (x + mouseVector.get(0) >= 0 && x + mouseVector.get(0) < windowWidth) {
         for (int y = 0; y < windowHeight; y++) {
-          if (x + mouseVector.get(0) < 0 || x + mouseVector.get(0) >= windowWidth
-          || y + mouseVector.get(1) < 0 || y + mouseVector.get(1) >= windowHeight) copy[x][y] = 0;
+          if (y + mouseVector.get(1) < 0 || y + mouseVector.get(1) >= windowHeight) copy[x][y] = 0;
           else copy[x][y] = display[x + mouseVector.get(0)][y + mouseVector.get(1)];
         }
-      display = copy;
       }
     }
-    System.out.println((System.nanoTime() - timee) / 1000000000.0);
+    display = copy;
     lastMouseX = e.getX();
     lastMouseY = e.getY();
   }
