@@ -114,10 +114,11 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
       maxValues[BOTTOM] += toIncreaseY;
       maxValues[TOP] += toIncreaseY;
       for (int x = 0; x < windowWidth; x++) {
-        for (int y = 0; y < windowHeight; y++) {
-          if (x + mouseVector.get(0) < 0 || x + mouseVector.get(0) >= windowWidth
-          || y + mouseVector.get(1) < 0 || y + mouseVector.get(1) >= windowHeight) copy[x][y] = 0;
-          else copy[x][y] = display[x + mouseVector.get(0)][y + mouseVector.get(1)];
+        if (x + mouseVector.get(0) >= 0 && x + mouseVector.get(0) < windowWidth) {
+          for (int y = 0; y < windowHeight; y++) {
+            if (y + mouseVector.get(1) < 0 || y + mouseVector.get(1) >= windowHeight) copy[x][y] = 0;
+            else copy[x][y] = display[x + mouseVector.get(0)][y + mouseVector.get(1)];
+          }
         }
       display = copy;
       }
