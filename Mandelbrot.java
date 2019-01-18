@@ -101,26 +101,6 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
   }
 
   public void mouseDragged(MouseEvent e) {
-<<<<<<< HEAD
-    long timee = System.nanoTime();
-    if (e.getButton() == 0 && lastMouseX != -1) {
-      Vector<Integer> mouseVector = new Vector(2);
-      mouseVector.addElement(new Integer(lastMouseX - e.getX()));
-      mouseVector.addElement(new Integer(lastMouseY - e.getY()));
-      double toIncreaseX = (Math.abs(maxValues[RIGHT]) + Math.abs(maxValues[LEFT])) * (mouseVector.get(0) / (double)windowWidth);
-      double toIncreaseY = (Math.abs(maxValues[BOTTOM]) + Math.abs(maxValues[TOP])) * (mouseVector.get(1) / (double)windowHeight);
-      int[][] copy = display.clone();
-      maxValues[RIGHT] += toIncreaseX;
-      maxValues[LEFT] += toIncreaseX;
-      maxValues[BOTTOM] += toIncreaseY;
-      maxValues[TOP] += toIncreaseY;
-      for (int x = 0; x < windowWidth; x++) {
-        if (x + mouseVector.get(0) >= 0 && x + mouseVector.get(0) < windowWidth) {
-          for (int y = 0; y < windowHeight; y++) {
-            if (y + mouseVector.get(1) < 0 || y + mouseVector.get(1) >= windowHeight) copy[x][y] = 0;
-            else copy[x][y] = display[x + mouseVector.get(0)][y + mouseVector.get(1)];
-          }
-=======
     Vector<Integer> mouseVector = new Vector(2);
     mouseVector.addElement(new Integer(lastMouseX - e.getX()));
     mouseVector.addElement(new Integer(lastMouseY - e.getY()));
@@ -136,7 +116,6 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
         for (int y = 0; y < windowHeight; y++) {
           if (y + mouseVector.get(1) < 0 || y + mouseVector.get(1) >= windowHeight) copy[x][y] = 0;
           else copy[x][y] = display[x + mouseVector.get(0)][y + mouseVector.get(1)];
->>>>>>> 1f560aa7e38a979ffdd118a89e8c639d287302d2
         }
       }
     }
