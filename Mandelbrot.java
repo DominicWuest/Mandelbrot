@@ -93,19 +93,21 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
   }
 
   public void zoom(double zoomValue) {
-
+    for (int i = 0; i < 4; i++) {
+      maxValues[i] *= zoomValue;
+    }
   }
 
   public void keyPressed(KeyEvent e) {
-
+    zoom(0.9);
   }
 
   public void mouseDragged(MouseEvent e) {
     Vector<Integer> mouseVector = new Vector<Integer>(2);
     mouseVector.addElement(lastMouseX - e.getX());
     mouseVector.addElement(lastMouseY - e.getY());
-    double toIncreaseX = (Math.abs(maxValues[LEFT]) + Math.abs(maxValues[RIGHT])) * (mouseVector.get(0) / (double)windowWidth);
-    double toIncreaseY = (Math.abs(maxValues[TOP]) + Math.abs(maxValues[BOTTOM])) * (mouseVector.get(1) / (double)windowHeight);
+    double toIncreaseX = (Math.abs(maxValues[LEFT] - maxValues[RIGHT])) * (mouseVector.get(0) / (double)windowWidth);
+    double toIncreaseY = (Math.abs(maxValues[TOP] - maxValues[BOTTOM])) * (mouseVector.get(1) / (double)windowHeight);
     maxValues[RIGHT] += toIncreaseX;
     maxValues[LEFT] += toIncreaseX;
     maxValues[BOTTOM] += toIncreaseY;

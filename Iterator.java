@@ -42,7 +42,7 @@ class Iterator implements Runnable {
     Mandelbrot.finishedStatus[this.index] = false;
   }
 
-  public double map(double a, double firstMin, double firstMax, double secondMin, double secondMax) {
+  public static synchronized double map(double a, double firstMin, double firstMax, double secondMin, double secondMax) {
     return ((a / (firstMax - firstMin)) * (secondMax - secondMin)) + secondMin;
   }
 
