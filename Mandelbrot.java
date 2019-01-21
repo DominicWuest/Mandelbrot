@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
 import java.util.Vector;
+import static java.lang.Math.signum;
 
 @SuppressWarnings("serial")
 class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
@@ -108,7 +109,10 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   }
 
   public void changeMaxIterations(double wheelValue) {
-    // TODO
+    if (maxIterations < 10) maxIterations += signum(wheelValue);
+    else if (maxIterations < 30) maxIterations += 2 * signum(wheelValue);
+    else maxIterations += 10 * signum(wheelValue);
+    if (maxIterations == -1) maxIterations = 0;
   }
 
   public void mouseDragged(MouseEvent e) {
@@ -152,7 +156,7 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   public void mouseWheelMoved(MouseWheelEvent e) {
     switch (e.getModifiersEx()) {
       case 0: zoom(e.getPreciseWheelRotation() * -10); break;
-      case 128: changeMaxIterations(e.getPreciseWheelRotation()); break;
+      case 128: changeMaxIterations(-e.getPreciseWheelRotation()); break;
     }
   }
 
