@@ -76,7 +76,7 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
         if (finishedChecker) break;
         mandelbrot.repaint();
       }
-      System.out.println((System.nanoTime() - time) / 1000000000.0 + " s");
+      //System.out.println((System.nanoTime() - time) / 1000000000.0 + " s");
       mandelbrot.repaint();
     }
   }
@@ -93,24 +93,26 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
   }
 
   public void zoom(double zoomValue) {
-
+    for (int i = 0; i < 4; i++) {
+      maxValues[i] *= zoomValue;
+    }
   }
 
   public void keyPressed(KeyEvent e) {
-
+    zoom(0.9);
   }
 
   public void mouseDragged(MouseEvent e) {
-    Vector<Integer> mouseVector = new Vector(2);
-    mouseVector.addElement(new Integer(lastMouseX - e.getX()));
-    mouseVector.addElement(new Integer(lastMouseY - e.getY()));
-    double toIncreaseX = (Math.abs(maxValues[LEFT]) + Math.abs(maxValues[RIGHT])) * (mouseVector.get(0) / (double)windowWidth);
-    double toIncreaseY = (Math.abs(maxValues[TOP]) + Math.abs(maxValues[BOTTOM])) * (mouseVector.get(1) / (double)windowHeight);
+    Vector<Integer> mouseVector = new Vector<Integer>(2);
+    mouseVector.addElement(lastMouseX - e.getX());
+    mouseVector.addElement(lastMouseY - e.getY());
+    double toIncreaseX = (Math.abs(maxValues[LEFT] - maxValues[RIGHT])) * (mouseVector.get(0) / (double)windowWidth);
+    double toIncreaseY = (Math.abs(maxValues[TOP] - maxValues[BOTTOM])) * (mouseVector.get(1) / (double)windowHeight);
     maxValues[RIGHT] += toIncreaseX;
     maxValues[LEFT] += toIncreaseX;
     maxValues[BOTTOM] += toIncreaseY;
     maxValues[TOP] += toIncreaseY;
-    int[][] copy = display.clone();
+    int[][] copy = new int[windowWidth][windowHeight];
     for (int x = 0; x < windowWidth; x++) {
       if (x + mouseVector.get(0) >= 0 && x + mouseVector.get(0) < windowWidth) {
         for (int y = 0; y < windowHeight; y++) {
