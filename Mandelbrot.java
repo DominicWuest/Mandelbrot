@@ -6,9 +6,10 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
 import java.util.Vector;
+import static java.lang.Math.signum;
 
 @SuppressWarnings("serial")
-class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
+class Mandelbrot extends JPanel implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 
   // Array of the maximum Values the points should have in the order of
   // Top, Right, Bottom, Left
@@ -58,6 +59,7 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
     frame.add(mandelbrot);
     frame.addKeyListener(mandelbrot);
     frame.addMouseMotionListener(mandelbrot);
+    frame.addMouseWheelListener(mandelbrot);
 
     while (true) {
       time = System.nanoTime();
@@ -103,21 +105,22 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
   }
 
   public void mouseDragged(MouseEvent e) {
-    Vector<Integer> mouseVector = new Vector<Integer>(2);
-    mouseVector.addElement(lastMouseX - e.getX());
-    mouseVector.addElement(lastMouseY - e.getY());
-    double toIncreaseX = (Math.abs(maxValues[LEFT] - maxValues[RIGHT])) * (mouseVector.get(0) / (double)windowWidth);
-    double toIncreaseY = (Math.abs(maxValues[TOP] - maxValues[BOTTOM])) * (mouseVector.get(1) / (double)windowHeight);
+    // Change in mouse position in x-axis
+    int dx = lastMouseX - e.getX();
+    // Change in mouse position in y-axis
+    int dy = lastMouseY - e.getY();
+    double toIncreaseX = (Math.abs(maxValues[LEFT] - maxValues[RIGHT])) * (dx / (double)windowWidth);
+    double toIncreaseY = (Math.abs(maxValues[TOP] - maxValues[BOTTOM])) * (dy / (double)windowHeight);
     maxValues[RIGHT] += toIncreaseX;
     maxValues[LEFT] += toIncreaseX;
     maxValues[BOTTOM] += toIncreaseY;
     maxValues[TOP] += toIncreaseY;
     int[][] copy = new int[windowWidth][windowHeight];
     for (int x = 0; x < windowWidth; x++) {
-      if (x + mouseVector.get(0) >= 0 && x + mouseVector.get(0) < windowWidth) {
+      if (x + dx >= 0 && x + dx < windowWidth) {
         for (int y = 0; y < windowHeight; y++) {
-          if (y + mouseVector.get(1) < 0 || y + mouseVector.get(1) >= windowHeight) copy[x][y] = 0;
-          else copy[x][y] = display[x + mouseVector.get(0)][y + mouseVector.get(1)];
+          if (y + dy < 0 || y + dy >= windowHeight) copy[x][y] = 0;
+          else copy[x][y] = display[x + dx][y + dy];
         }
       }
     }
@@ -131,7 +134,16 @@ class Mandelbrot extends JPanel implements KeyListener, MouseMotionListener {
     lastMouseY = e.getY();
   }
 
+  public void mouseWheelMoved(MouseWheelEvent e) {
+    maxIterations += e.getScrollAmount() * Math.signum(e.getPreciseWheelRotation());
+  }
+
   // Ununsed EventListener functions
+  public void mouseClicked(MouseEvent e) {}
+  public void mousePressed(MouseEvent e) {}
+  public void mouseReleased(MouseEvent e) {}
+  public void mouseEntered(MouseEvent e) {}
+  public void mouseExited(MouseEvent e) {}
   public void keyReleased(KeyEvent e) {}
   public void keyTyped(KeyEvent e) {}
 
