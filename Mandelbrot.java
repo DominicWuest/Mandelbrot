@@ -110,19 +110,19 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
     g2.drawImage(canvas, null, null);
   }
 
-  // Only Values > 2 will cause a zoom
-  public void zoom(double zoomValue) {
-    // TODO zoom where mouse is
+  public void zoom(double zoomValue, MouseWheelEvent e) {
+    double percentageTop = e.getY() / (double)(windowHeight);
+    double percentageLeft = e.getX() / (double)(windowWidth);
     double dx = Math.abs(maxValues[LEFT] - maxValues[RIGHT]) / zoomValue;
     double dy = Math.abs(maxValues[TOP] - maxValues[BOTTOM]) / zoomValue;
-    maxValues[RIGHT] -= dx;
-    maxValues[LEFT] += dx;
-    maxValues[BOTTOM] -= dy;
-    maxValues[TOP] += dy;
+    maxValues[RIGHT] -= (1.0 - percentageLeft) * dx;
+    maxValues[LEFT] += percentageLeft * dx;
+    maxValues[BOTTOM] -= (1.0 - percentageTop) * dy;
+    maxValues[TOP] += percentageTop * dy;
   }
 
   public void changeMaxIterations(double wheelValue) {
-    if (maxIterations < 10) maxIterations += signum(wheelValue);
+    if (maxIterations  < 10) maxIterations += signum(wheelValue);
     else if (maxIterations < 30) maxIterations += 2 * signum(wheelValue);
     else maxIterations += 10 * signum(wheelValue);
     if (maxIterations == -1) maxIterations = 0;
@@ -168,7 +168,7 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
 
   public void mouseWheelMoved(MouseWheelEvent e) {
     switch (e.getModifiersEx()) {
-      case 0: zoom(1 / e.getPreciseWheelRotation() * -10); break;
+      case 0: zoom(1 / e.getPreciseWheelRotation() * -5, e); break;
       case 128: changeMaxIterations(e.getPreciseWheelRotation()); break;
     }
   }
