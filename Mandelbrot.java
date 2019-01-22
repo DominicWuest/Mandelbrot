@@ -8,6 +8,13 @@ import java.awt.event.*;
 import java.util.Vector;
 import static java.lang.Math.signum;
 
+/*
+*
+*  This is a program to easily explore the Mandelbrot Set
+*  It uses multithreading to increase performence and make the navigation smoother
+*
+*/
+
 @SuppressWarnings("serial")
 class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
@@ -24,30 +31,32 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
 
   static Mandelbrot mandelbrot;
 
+  // Matrix of displayed pixels
   static volatile int[][] display = new int[windowWidth][windowHeight];
 
   static JFrame frame = new JFrame("Mandelbrot");
 
+  // Maximum amount of times to call the Mandelbrot function
+  // Until it exceeds the bound
   static int maxIterations = 500, bound = 2;
 
-  static double referenceIterations = maxIterations;
-
+  // Amount of threads available in the current machine
   static final int N_THREADS = Runtime.getRuntime().availableProcessors();
 
+  // Array of the threads calculating the Mandelbrot
   static Iterator[] iterators = new Iterator[N_THREADS - 1];
 
+  // Array of the threads' status (true = finished; false = calculating)
   static volatile boolean[] finishedStatus = new boolean[N_THREADS - 1];
 
   static Long time;
 
-  static int iteratorIndex = 0;
-
-  static boolean finishedChecker;
-
   static BufferedImage canvas;
 
+  // Last x- and y-position of the mouse so that mouseDragged knows how far it should move the picture
   static int lastMouseX, lastMouseY;
 
+  // Last mouse button which has been pressed (-1 = none, 1 = left-click)
   static int lastButtonPressed = -1;
 
   public static void main(String[] args) {
@@ -65,16 +74,19 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
     frame.addMouseMotionListener(mandelbrot);
     frame.addMouseWheelListener(mandelbrot);
 
+    // Main Loop
     while (true) {
       time = System.nanoTime();
+      // Starts new threads and assigns them the coordinates to calculate
       for (int i = 0; i < iterators.length; i++) {
         iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 1) * i, windowHeight / (N_THREADS - 1) * (i + 1));
-        finishedStatus[i] = true;
+        finishedStatus[i] = false;
       }
+      // Checks if all threads have finished calculating
       while (true)  {
-        finishedChecker = true;
+        boolean finishedChecker = true;
         for (int i = 0; i < iterators.length; i++) {
-          if (finishedStatus[i]) {
+          if (!finishedStatus[i]) {
             finishedChecker = false;
             break;
           }
@@ -100,6 +112,7 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
 
   // Only Values > 2 will cause a zoom
   public void zoom(double zoomValue) {
+    // TODO zoom where mouse is
     double dx = Math.abs(maxValues[LEFT] - maxValues[RIGHT]) / zoomValue;
     double dy = Math.abs(maxValues[TOP] - maxValues[BOTTOM]) / zoomValue;
     maxValues[RIGHT] -= dx;
@@ -155,8 +168,8 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
 
   public void mouseWheelMoved(MouseWheelEvent e) {
     switch (e.getModifiersEx()) {
-      case 0: zoom(e.getPreciseWheelRotation() * -10); break;
-      case 128: changeMaxIterations(-e.getPreciseWheelRotation()); break;
+      case 0: zoom(1 / e.getPreciseWheelRotation() * -10); break;
+      case 128: changeMaxIterations(e.getPreciseWheelRotation()); break;
     }
   }
 

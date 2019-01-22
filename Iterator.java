@@ -39,7 +39,7 @@ class Iterator implements Runnable {
         Mandelbrot.display[x][y] = color;
       }
     }
-    Mandelbrot.finishedStatus[this.index] = false;
+    Mandelbrot.finishedStatus[this.index] = true;
   }
 
   public static synchronized double map(double a, double firstMin, double firstMax, double secondMin, double secondMax) {
