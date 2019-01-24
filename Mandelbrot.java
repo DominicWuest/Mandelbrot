@@ -64,6 +64,10 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   // Last mouse button which has been pressed (-1 = none, 1 = left-click)
   static int lastButtonPressed = -1;
 
+  static volatile int importantX = 0, importantY = 0;
+
+  static boolean xMax, yMax;
+
   // Main function
   public static void main(String[] args) {
 
@@ -84,7 +88,7 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
 
       public void mousePressed(MouseEvent e) {
         if (e.getButton() == 1) {
-          
+
         }
       }
 
@@ -183,6 +187,11 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
       int dx = lastMouseX - e.getX();
       // Change in mouse position in y-axis
       int dy = lastMouseY - e.getY();
+      // Change the following variables so the threads prioritize them over the usual pixels they would have to caluclate
+      importantX = (windowWidth + dx) % windowWidth;
+      importantY = (windowHeight + dy) % windowHeight;
+      xMax = dx < 0 ? true : false;
+      yMax = dy < 0 ? true : false;
       // Amount to increase maxValues in x-axis
       double toIncreaseX = (Math.abs(maxValues[LEFT] - maxValues[RIGHT])) * (dx / (double)windowWidth);
       // Amount to increase maxValues in y-axis
