@@ -47,10 +47,12 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   static final int N_THREADS = Runtime.getRuntime().availableProcessors();
 
   // Array of the threads calculating the Mandelbrot
-  static Iterator[] iterators = new Iterator[N_THREADS - 1];
+  static Iterator[] iterators = new Iterator[N_THREADS - 2];
+
+  static ImportantPixelCalculator importantPixelCalculator;
 
   // Array of the threads' status (true = finished; false = calculating)
-  static volatile boolean[] finishedStatus = new boolean[N_THREADS - 1];
+  static volatile boolean[] finishedStatus = new boolean[N_THREADS - 2];
 
   // Where everything gets painted on
   static BufferedImage canvas = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_ARGB);
@@ -100,11 +102,13 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
     // Adding main menu button to JPanel
     mandelbrot.add(button);
 
+    importantPixelCalculator = new ImportantPixelCalculator();
+
     // Main Loop
     while (true) {
       // Starts new threads and assigns them the coordinates to calculate
       for (int i = 0; i < iterators.length; i++) {
-        iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 1) * i, windowHeight / (N_THREADS - 1) * (i + 1));
+        iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 2) * i, windowHeight / (N_THREADS - 2) * (i + 1));
         finishedStatus[i] = false;
       }
       // Checks if all threads have finished calculating

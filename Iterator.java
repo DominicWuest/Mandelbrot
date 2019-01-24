@@ -39,9 +39,6 @@ class Iterator implements Runnable {
 
     // Iterate over all coordinates expected to calculate
     for (int y = this.minY; y < this.maxY; y++) {
-      if (Mandelbrot.importantX != 0 || Mandelbrot.importantY != 0) {
-        calculateImportant(Mandelbrot.importantX, Mandelbrot.importantY, Mandelbrot.xMax, Mandelbrot.yMax);
-      }
       // Original imaginary part of the complex number to calculate
       double bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
       for (int x = 0; x < Mandelbrot.windowWidth; x++) {
@@ -56,30 +53,6 @@ class Iterator implements Runnable {
     }
     // Changes its finished status to true, so to signal, that it has finished calculating
     Mandelbrot.finishedStatus[this.index] = true;
-  }
-
-  public void calculateImportant(int origX, int origY, boolean xMax, boolean yMax) {
-    Mandelbrot.importantX = 0;
-    Mandelbrot.importantY = 0;
-
-    if (origX != 0 && origX != Mandelbrot.windowWidth) {
-      for (int x = origX; x >= 0 && x < Mandelbrot.windowWidth; x += xMax ? -1 : 1) {
-        double a = map(x, 0, Mandelbrot.windowWidth, Mandelbrot.maxValues[Mandelbrot.LEFT], Mandelbrot.maxValues[Mandelbrot.RIGHT]);
-        for (int y = 0; y < Mandelbrot.windowHeight; y++) {
-          double bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
-          setColor(x, y, iterationsNeeded(a, bi));
-        }
-      }
-    }
-    if (origY != 0 && origY != Mandelbrot.windowHeight) {
-      for (int y = origY; y >= 0 && y < Mandelbrot.windowHeight; y += yMax ? 1 : -1) {
-        double bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
-        for (int x = 0; x < Mandelbrot.windowWidth; x++) {
-          double a = map(x, 0, Mandelbrot.windowWidth, Mandelbrot.maxValues[Mandelbrot.LEFT], Mandelbrot.maxValues[Mandelbrot.RIGHT]);
-          setColor(x, y, iterationsNeeded(a, bi));
-        }
-      }
-    }
   }
 
   public int iterationsNeeded(double a, double bi) {
