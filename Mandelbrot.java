@@ -244,7 +244,7 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   // Zooms if scrolled or changes maxIterations when scrolled while holding ctrl
   public void mouseWheelMoved(MouseWheelEvent e) {
     switch (e.getModifiersEx()) {
-      case 0: zoom(1 / e.getPreciseWheelRotation() * -5, e); break;
+      case 0: zoom(1 / e.getPreciseWheelRotation() * 5, e); break;
       case 128: changeMaxIterations(e.getPreciseWheelRotation()); break;
     }
   }
