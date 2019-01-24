@@ -188,10 +188,10 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
       // Change in mouse position in y-axis
       int dy = lastMouseY - e.getY();
       // Change the following variables so the threads prioritize them over the usual pixels they would have to caluclate
-      importantX = (windowWidth + dx) % windowWidth;
-      importantY = (windowHeight + dy) % windowHeight;
-      xMax = dx < 0 ? true : false;
-      yMax = dy < 0 ? true : false;
+      importantX = windowWidth - ((windowWidth + dx) % windowWidth);
+      importantY = windowHeight - ((windowHeight + dy) % windowHeight);
+      xMax = dx > 0 ? true : false;
+      yMax = dy > 0 ? true : false;
       // Amount to increase maxValues in x-axis
       double toIncreaseX = (Math.abs(maxValues[LEFT] - maxValues[RIGHT])) * (dx / (double)windowWidth);
       // Amount to increase maxValues in y-axis

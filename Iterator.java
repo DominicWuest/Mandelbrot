@@ -39,7 +39,7 @@ class Iterator implements Runnable {
 
     // Iterate over all coordinates expected to calculate
     for (int y = this.minY; y < this.maxY; y++) {
-      if ((Mandelbrot.importantX > 0 && Mandelbrot.importantX < Mandelbrot.windowWidth - 1) || (Mandelbrot.importantY > 0 && Mandelbrot.importantY < Mandelbrot.windowHeight - 1)) {
+      if (Mandelbrot.importantX != 0 || Mandelbrot.importantY != 0) {
         calculateImportant(Mandelbrot.importantX, Mandelbrot.importantY, Mandelbrot.xMax, Mandelbrot.yMax);
       }
       // Original imaginary part of the complex number to calculate
@@ -59,26 +59,24 @@ class Iterator implements Runnable {
   }
 
   public void calculateImportant(int origX, int origY, boolean xMax, boolean yMax) {
-    Mandelbrot.importantX += xMax ? 100 : -100;
-    Mandelbrot.importantY += yMax ? 100 : -100;
+    Mandelbrot.importantX = 0;
+    Mandelbrot.importantY = 0;
 
-    if (origX > 0 && origX < Mandelbrot.windowWidth) {
-      for (int y = 0; y < Mandelbrot.windowHeight; y++) {
-        double bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
-        for (int x = xMax ? origX : 0; x > 0 && x < Mandelbrot.windowWidth && x < origX + 100 && x > origX - 100; x += xMax ? 1 : -1) {
-          double a = map(x, 0, Mandelbrot.windowWidth, Mandelbrot.maxValues[Mandelbrot.LEFT], Mandelbrot.maxValues[Mandelbrot.RIGHT]);
-          int iterations = iterationsNeeded(a, bi);
-          setColor(x, y, iterations);
+    if (origX != 0 && origX != Mandelbrot.windowWidth) {
+      for (int x = origX; x >= 0 && x < Mandelbrot.windowWidth; x += xMax ? -1 : 1) {
+        double a = map(x, 0, Mandelbrot.windowWidth, Mandelbrot.maxValues[Mandelbrot.LEFT], Mandelbrot.maxValues[Mandelbrot.RIGHT]);
+        for (int y = 0; y < Mandelbrot.windowHeight; y++) {
+          double bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
+          setColor(x, y, iterationsNeeded(a, bi));
         }
       }
     }
-    if (origY > 0 && origY < Mandelbrot.windowHeight) {
-      for (int x = 0; x < Mandelbrot.windowWidth; x++) {
-        double a = map(x, 0, Mandelbrot.windowWidth, Mandelbrot.maxValues[Mandelbrot.LEFT], Mandelbrot.maxValues[Mandelbrot.RIGHT]);
-        for (int y = yMax ? origY : 0; y > 0 && y < Mandelbrot.windowHeight && y < origY + 100 && y > origY - 100; y += yMax ? 1 : -1) {
-          double bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
-          int iterations = iterationsNeeded(a, bi);
-          setColor(x, y, iterations);
+    if (origY != 0 && origY != Mandelbrot.windowHeight) {
+      for (int y = origY; y >= 0 && y < Mandelbrot.windowHeight; y += yMax ? 1 : -1) {
+        double bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
+        for (int x = 0; x < Mandelbrot.windowWidth; x++) {
+          double a = map(x, 0, Mandelbrot.windowWidth, Mandelbrot.maxValues[Mandelbrot.LEFT], Mandelbrot.maxValues[Mandelbrot.RIGHT]);
+          setColor(x, y, iterationsNeeded(a, bi));
         }
       }
     }
