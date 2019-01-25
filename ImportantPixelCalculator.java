@@ -47,7 +47,7 @@ class ImportantPixelCalculator implements Runnable {
     if (origY != 0 && origY != Mandelbrot.windowHeight) {
       for (int y = origY; y >= 0 && y < Mandelbrot.windowHeight; y += yMax ? 1 : -1) {
         double bi = map(y, 0, Mandelbrot.windowHeight, Mandelbrot.maxValues[Mandelbrot.TOP], Mandelbrot.maxValues[Mandelbrot.BOTTOM]);
-        for (int x = 0; x < Mandelbrot.windowWidth; x++) {
+        for (int x = origX; x >= 0 && x < Mandelbrot.windowWidth; x += xMax ? -1 : 1) {
           double a = map(x, 0, Mandelbrot.windowWidth, Mandelbrot.maxValues[Mandelbrot.LEFT], Mandelbrot.maxValues[Mandelbrot.RIGHT]);
           setColor(x, y, iterationsNeeded(a, bi));
         }

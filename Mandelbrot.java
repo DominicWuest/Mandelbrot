@@ -63,9 +63,13 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   // Last mouse button which has been pressed (-1 = none, 1 = left-click)
   static int lastButtonPressed = -1;
 
+  // Start of variables used for ImportantPixelCalculator to know which ones to calculate
+  // The start from where to calculate the important pixels
   static volatile int importantX = 0, importantY = 0;
 
+  // In which direction was the window pulled (true = in the negative axis)
   static boolean xMax, yMax;
+  // End of variables used for ImportantPixelCalculator to know which ones to calculate
 
   // Main function
   public static void main(String[] args) {
