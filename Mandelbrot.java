@@ -57,9 +57,6 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   // Where everything gets painted on
   static BufferedImage canvas = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_ARGB);
 
-  // Main menu button
-  static JButton button = new JButton();
-
   // Last x- and y-position of the mouse so that mouseDragged knows how far it should move the picture
   static int lastMouseX, lastMouseY;
 
@@ -82,25 +79,6 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
     frame.addMouseListener(mandelbrot);
     frame.addMouseMotionListener(mandelbrot);
     frame.addMouseWheelListener(mandelbrot);
-
-    // Setting bounds of main menu button
-    mandelbrot.setLayout(null);
-    button.setBounds(10, 10, 40, 40);
-    button.addMouseListener(new MouseListener() {
-
-      public void mousePressed(MouseEvent e) {
-        if (e.getButton() == 1) {
-
-        }
-      }
-
-      public void mouseExited(MouseEvent e) {}
-      public void mouseEntered(MouseEvent e) {}
-      public void mouseReleased(MouseEvent e) {}
-      public void mouseClicked(MouseEvent e) {}
-    });
-    // Adding main menu button to JPanel
-    mandelbrot.add(button);
 
     importantPixelCalculator = new ImportantPixelCalculator();
 
