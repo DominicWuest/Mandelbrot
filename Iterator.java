@@ -44,17 +44,15 @@ class Iterator implements Runnable {
       for (int x = 0; x < Mandelbrot.windowWidth; x++) {
         // Original real port of the complex number to calculate
         double a = map(x, 0, Mandelbrot.windowWidth, Mandelbrot.maxValues[Mandelbrot.LEFT], Mandelbrot.maxValues[Mandelbrot.RIGHT]);
-        // Amount of iterations needed until the function-value was out of bounds (bigger than Mandelbrot.bound)
-        // Gets incremented after every new recursive function call
-        int iterations = iterationsNeeded(a, bi);
         //Setting color for the pixel
-        setColor(x, y, iterations);
+        setColor(x, y, iterationsNeeded(a, bi));
       }
     }
     // Changes its finished status to true, so to signal, that it has finished calculating
     Mandelbrot.finishedStatus[this.index] = true;
   }
 
+  // This function returns the needed iterations until the function value gets bigger than the specified bounds (Mandelbrot.bound)
   public int iterationsNeeded(double a, double bi) {
     // Amount of iterations needed until the function-value was out of bounds (bigger than Mandelbrot.bound)
     // Gets incremented after every new recursive function call
@@ -83,7 +81,7 @@ class Iterator implements Runnable {
    * Which is a value between 0 and maxIterations to a value between 0 and 1
    * Then mapping the square root of this mapped value to a value between 0 and 255
    *
-   * Then, assinging the caluclated pixel in the display matrix to the caluclated color
+   * It then assigns the caluclated pixel in the display matrix to the caluclated color
    *
   */
   public void setColor(int x, int y, int iterations) {

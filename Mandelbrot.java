@@ -49,7 +49,8 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   // Array of the threads calculating the Mandelbrot
   static Iterator[] iterators = new Iterator[N_THREADS - 2];
 
-  static ImportantPixelCalculator importantPixelCalculator;
+  // Object of ImportantPixelCalculator, it calculates the blurry pixels when navigating over the picture
+  static ImportantPixelCalculator importantPixelCalculator = new ImportantPixelCalculator();;
 
   // Array of the threads' status (true = finished; false = calculating)
   static volatile boolean[] finishedStatus = new boolean[N_THREADS - 2];
@@ -83,8 +84,6 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
     frame.addMouseListener(mandelbrot);
     frame.addMouseMotionListener(mandelbrot);
     frame.addMouseWheelListener(mandelbrot);
-
-    importantPixelCalculator = new ImportantPixelCalculator();
 
     // Main Loop
     while (true) {
@@ -173,7 +172,7 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
       int dx = lastMouseX - e.getX();
       // Change in mouse position in y-axis
       int dy = lastMouseY - e.getY();
-      // Change the following variables so the threads prioritize them over the usual pixels they would have to caluclate
+      // Change the following variables so the ImportantPixelCalculator prioritizes them over the usual pixels it would have to caluclate
       importantX = windowWidth - ((windowWidth + dx) % windowWidth);
       importantY = windowHeight - ((windowHeight + dy) % windowHeight);
       xMax = dx > 0 ? true : false;
