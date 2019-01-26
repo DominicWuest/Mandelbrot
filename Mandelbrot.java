@@ -72,6 +72,10 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   static boolean xMax, yMax;
   // End of variables used for ImportantPixelCalculator to know which ones to calculate
 
+  static JButton menuButton = new JButton();
+
+  static boolean menu = false;
+
   // Main function
   public static void main(String[] args) {
 
@@ -85,43 +89,69 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
     frame.addMouseMotionListener(mandelbrot);
     frame.addMouseWheelListener(mandelbrot);
 
+    mandelbrot.setLayout(null);
+    mandelbrot.add(menuButton);
+    menuButton.setBounds(10, 10, 40, 40);
+    menuButton.addMouseListener(new MouseListener() {
+      public void mousePressed(MouseEvent e) {
+        if (e.getButton() == 1) {
+          menu = true;
+          menuButton.setVisible(false);
+        }
+      }
+
+      // Unused EventListener functions
+      public void mouseClicked(MouseEvent e) {}
+      public void mouseReleased(MouseEvent e) {}
+      public void mouseEntered(MouseEvent e) {}
+      public void mouseExited(MouseEvent e) {}
+    });
+
     // Main Loop
     while (true) {
-      // Starts new threads and assigns them the coordinates to calculate
-      for (int i = 0; i < iterators.length; i++) {
-        iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 2) * i, windowHeight / (N_THREADS - 2) * (i + 1));
-        finishedStatus[i] = false;
-      }
-      // Checks if all threads have finished calculating
-      while (true)  {
-        boolean finishedChecker = true;
+      if (menu) {
+
+      } else {
+        // Starts new threads and assigns them the coordinates to calculate
         for (int i = 0; i < iterators.length; i++) {
-          if (!finishedStatus[i]) {
-            finishedChecker = false;
-            break;
-          }
+          iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 2) * i, windowHeight / (N_THREADS - 2) * (i + 1));
+          finishedStatus[i] = false;
         }
-        if (finishedChecker) break;
-        // Repaints after every check to better see progress
+        // Checks if all threads have finished calculating
+        while (true)  {
+          boolean finishedChecker = true;
+          for (int i = 0; i < iterators.length; i++) {
+            if (!finishedStatus[i]) {
+              finishedChecker = false;
+              break;
+            }
+          }
+          if (finishedChecker) break;
+          // Repaints after every check to better see progress
+          mandelbrot.repaint();
+        }
+        // Repaints after all threads have finished calculating
         mandelbrot.repaint();
       }
-      // Repaints after all threads have finished calculating
-      mandelbrot.repaint();
     }
   }
 
   // Function to paint everything needed
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    Graphics2D g2 = (Graphics2D)g;
-    // Draws every pixel of the display matrix
-    for (int x = 0; x < windowWidth; x++) {
-      for (int y = 0; y < windowHeight; y++) {
-        // setRGB takes the color as a 24-bit integer, Alpha / Red / Green / Blue
-        canvas.setRGB(x, y, (255 << 24) | (0 << 16) | (0 << 8) | display[x][y]);
+    if (menu) {
+
+    } else {
+      Graphics2D g2 = (Graphics2D)g;
+      // Draws every pixel of the display matrix
+      for (int x = 0; x < windowWidth; x++) {
+        for (int y = 0; y < windowHeight; y++) {
+          // setRGB takes the color as a 24-bit integer, Alpha / Red / Green / Blue
+          canvas.setRGB(x, y, (255 << 24) | (0 << 16) | (0 << 8) | display[x][y]);
+        }
       }
+      g2.drawImage(canvas, null, null);
     }
-    g2.drawImage(canvas, null, null);
   }
 
   // Zooms into or out of the image
