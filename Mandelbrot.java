@@ -72,9 +72,21 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   static boolean xMax, yMax;
   // End of variables used for ImportantPixelCalculator to know which ones to calculate
 
-  static JButton menuButton = new JButton();
+  static JButton menuButton = new JButton("Menu");
 
-  static boolean menu = false;
+  static JButton resetButton = new JButton("Reset");
+
+  static JButton quitButton = new JButton("Quit");
+
+  static JButton startButton = new JButton("Start");
+
+  static JButton optionsButton = new JButton("Options");
+
+  static JButton menuQuitButton = new JButton("Quit");
+
+  static final int MENU_SCREEN = 0, DRAW_MANDELBROT = 1, OPTIONS_SCREEN = 2;
+
+  static int mode = MENU_SCREEN;
 
   // Main function
   public static void main(String[] args) {
@@ -91,67 +103,90 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
 
     mandelbrot.setLayout(null);
     mandelbrot.add(menuButton);
-    menuButton.setBounds(10, 10, 40, 40);
-    menuButton.addMouseListener(new MouseListener() {
-      public void mousePressed(MouseEvent e) {
-        if (e.getButton() == 1) {
-          menu = true;
-          menuButton.setVisible(false);
-        }
-      }
-
-      // Unused EventListener functions
-      public void mouseClicked(MouseEvent e) {}
-      public void mouseReleased(MouseEvent e) {}
-      public void mouseEntered(MouseEvent e) {}
-      public void mouseExited(MouseEvent e) {}
-    });
+    mandelbrot.add(resetButton);
+    mandelbrot.add(quitButton);
+    mandelbrot.add(startButton);
+    mandelbrot.add(optionsButton);
+    mandelbrot.add(menuQuitButton);
+    menuButton.setBounds(windowWidth / 7, windowHeight / 20, windowWidth / 7, windowHeight / 20);
+    resetButton.setBounds(windowWidth / 7 * 3, windowHeight / 20, windowWidth / 7, windowHeight / 20);
+    quitButton.setBounds(windowWidth / 7 * 5, windowHeight / 20, windowWidth / 7, windowHeight / 20);
+    startButton.setBounds(windowWidth / 6, windowHeight / 7, windowWidth / 3 * 2, windowHeight / 7);
+    optionsButton.setBounds(windowWidth / 6, windowHeight / 7 * 3, windowWidth / 3 * 2, windowHeight / 7);
+    menuQuitButton.setBounds(windowWidth / 6, windowHeight / 7 * 5, windowWidth / 3 * 2, windowHeight / 7);
+    Mandelbrot.menuButton.setVisible(false);
+    Mandelbrot.resetButton.setVisible(false);
+    Mandelbrot.quitButton.setVisible(false);
+    menuButton.addMouseListener(new ButtonListener(ButtonListener.MENU));
+    resetButton.addMouseListener(new ButtonListener(ButtonListener.reset));
+    quitButton.addMouseListener(new ButtonListener(ButtonListener.QUIT));
+    startButton.addMouseListener(new ButtonListener(ButtonListener.START));
+    optionsButton.addMouseListener(new ButtonListener(ButtonListener.OPTIONS));
+    menuQuitButton.addMouseListener(new ButtonListener(ButtonListener.QUIT));
 
     // Main Loop
     while (true) {
-      if (menu) {
-
-      } else {
-        // Starts new threads and assigns them the coordinates to calculate
-        for (int i = 0; i < iterators.length; i++) {
-          iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 2) * i, windowHeight / (N_THREADS - 2) * (i + 1));
-          finishedStatus[i] = false;
-        }
-        // Checks if all threads have finished calculating
-        while (true)  {
-          boolean finishedChecker = true;
-          for (int i = 0; i < iterators.length; i++) {
-            if (!finishedStatus[i]) {
-              finishedChecker = false;
-              break;
-            }
-          }
-          if (finishedChecker) break;
-          // Repaints after every check to better see progress
-          mandelbrot.repaint();
-        }
-        // Repaints after all threads have finished calculating
-        mandelbrot.repaint();
+      switch (mode) {
+        case MENU_SCREEN: menuScreen(); break;
+        case DRAW_MANDELBROT: mandelbrotLoop(); break;
+        case OPTIONS_SCREEN: optionsScreen(); break;
       }
     }
+  }
+
+  public static void menuScreen() {
+    try {
+      Thread.sleep(1);
+    } catch (Exception e) {}
+  }
+
+  public static void mandelbrotLoop() {
+    // Starts new threads and assigns them the coordinates to calculate
+    for (int i = 0; i < iterators.length; i++) {
+      iterators[i] = new Iterator(i, windowHeight / (N_THREADS - 2) * i, windowHeight / (N_THREADS - 2) * (i + 1));
+      finishedStatus[i] = false;
+    }
+    // Checks if all threads have finished calculating
+    while (true)  {
+      boolean finishedChecker = true;
+      for (int i = 0; i < iterators.length; i++) {
+        if (!finishedStatus[i]) {
+          finishedChecker = false;
+          break;
+        }
+      }
+      if (finishedChecker) break;
+      // Repaints after every check to better see progress
+      mandelbrot.repaint();
+    }
+    // Repaints after all threads have finished calculating
+    mandelbrot.repaint();
+  }
+
+  public static void optionsScreen() {
+
   }
 
   // Function to paint everything needed
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    if (menu) {
-
-    } else {
-      Graphics2D g2 = (Graphics2D)g;
-      // Draws every pixel of the display matrix
-      for (int x = 0; x < windowWidth; x++) {
-        for (int y = 0; y < windowHeight; y++) {
-          // setRGB takes the color as a 24-bit integer, Alpha / Red / Green / Blue
-          canvas.setRGB(x, y, (255 << 24) | (0 << 16) | (0 << 8) | display[x][y]);
-        }
-      }
-      g2.drawImage(canvas, null, null);
+    switch (mode) {
+      case MENU_SCREEN: break;
+      case DRAW_MANDELBROT: drawMandelbrot(g); break;
+      case OPTIONS_SCREEN: break;
     }
+  }
+
+  public static void drawMandelbrot(Graphics g) {
+    Graphics2D g2 = (Graphics2D)g;
+    // Draws every pixel of the display matrix
+    for (int x = 0; x < windowWidth; x++) {
+      for (int y = 0; y < windowHeight; y++) {
+        // setRGB takes the color as a 24-bit integer, Alpha / Red / Green / Blue
+        canvas.setRGB(x, y, (255 << 24) | (0 << 16) | (0 << 8) | display[x][y]);
+      }
+    }
+    g2.drawImage(canvas, null, null);
   }
 
   // Zooms into or out of the image
