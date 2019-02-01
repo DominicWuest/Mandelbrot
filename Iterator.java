@@ -24,14 +24,15 @@ class Iterator implements Runnable {
 
   // Constructor
   Iterator(int index, int minY, int maxY) {
-
-    // Initializing thread with the name of the given index
-    myThread = new Thread(this, Integer.toString(index));
-    this.index = index;
-    this.minY = minY;
-    this.maxY = maxY;
-    // Starting new Thread
-    myThread.start();
+    if (index >= 0 && minY >= 0 && maxY >= 0) {
+      // Initializing thread with the name of the given index
+      myThread = new Thread(this, Integer.toString(index));
+      this.index = index;
+      this.minY = minY;
+      this.maxY = maxY;
+      // Starting new Thread
+      myThread.start();
+    }
   }
 
   // This function runs in parallel and gets called after starting the thread
@@ -85,7 +86,7 @@ class Iterator implements Runnable {
    *
   */
   public void setColor(int x, int y, int iterations) {
-    Mandelbrot.display[x][y] = (int)map(Math.sqrt(map(iterations, 0, Mandelbrot.maxIterations, 0, 1)), 0, 1, 0, 255);
+    Mandelbrot.display[x][y] = (255 << 24) | (0 << 16) | (0 << 8) | (int)map(Math.sqrt(map(iterations, 0, Mandelbrot.maxIterations, 0, 1)), 0, 1, 0, 255);
   }
 
   // This function maps the parameter a, which is between firstMin and firstMax to a number between secondMin and secondMax

@@ -50,7 +50,7 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
   static Iterator[] iterators = new Iterator[N_THREADS - 2];
 
   // Object of ImportantPixelCalculator, it calculates the blurry pixels when navigating over the picture
-  static ImportantPixelCalculator importantPixelCalculator = new ImportantPixelCalculator();;
+  static ImportantPixelCalculator importantPixelCalculator = new ImportantPixelCalculator();
 
   // Array of the threads' status (true = finished; false = calculating)
   static volatile boolean[] finishedStatus = new boolean[N_THREADS - 2];
@@ -183,7 +183,7 @@ class Mandelbrot extends JPanel implements MouseListener, MouseMotionListener, M
     for (int x = 0; x < windowWidth; x++) {
       for (int y = 0; y < windowHeight; y++) {
         // setRGB takes the color as a 24-bit integer, Alpha / Red / Green / Blue
-        canvas.setRGB(x, y, (255 << 24) | (0 << 16) | (0 << 8) | display[x][y]);
+        canvas.setRGB(x, y, display[x][y]);
       }
     }
     g2.drawImage(canvas, null, null);
